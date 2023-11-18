@@ -1,0 +1,23 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px 0;
+}
+
+.clear_btn {
+  background-color: #bd1616ad;
+}
+
+.clear_btn:hover {
+  outline: none;
+  background-color: #bd1616ff;
+  border-color: #f9f9f9;
+}
