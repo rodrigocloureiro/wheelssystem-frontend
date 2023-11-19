@@ -7,6 +7,7 @@ function App() {
     const [searchValue, setSearchValue] = useState("");
     const [searchResult, setSearchResult] = useState(null);
     const [error, setError] = useState(null);
+    const [isNumber, setIsNumber] = useState(false);
 
     const modelRef = useRef(null);
     const categoryRef = useRef(null);
@@ -19,12 +20,15 @@ function App() {
     };
 
     const onClear = () => {
+        setSearchValue("");
         setError(null);
         setSearchResult(null);
+        onClearInputs();
     };
 
     const handleSearchValue = ({target: {value}}) => {
         setSearchValue(value);
+        setIsNumber(!isNaN(value));
         // console.log(value);
     };
 
@@ -61,7 +65,8 @@ function App() {
 
     const handleGetBike = (e) => {
         e.preventDefault();
-        fetch("http://localhost:8080/bike/getBike/" + searchValue)
+        let URL = isNumber ? "http://localhost:8080/bike/getBike/" : "http://localhost:8080/bike/getBikeModel/";
+        fetch(URL + searchValue)
             .then((res) => res.json())
             .then((res) => {
                 setSearchResult(res);
@@ -99,7 +104,10 @@ function App() {
                         <option value="EXTREME">Extreme</option>
                     </select>
                 </div>
-                <button onClick={handleAddBike}>
+                <button
+                    onClick={handleAddBike}
+                    disabled={model === "" || category === ""}
+                >
                     Add
                 </button>
             </div>
@@ -112,7 +120,10 @@ function App() {
                            ref={searchRef}
                     />
                 </div>
-                <button onClick={handleGetBike}>
+                <button
+                    onClick={handleGetBike}
+                    disabled={searchValue === ""}
+                >
                     Search
                 </button>
             </div>
