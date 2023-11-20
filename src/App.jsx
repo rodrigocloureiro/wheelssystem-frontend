@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useRef, useState, useEffect} from 'react';
 import './App.css';
 
 function App() {
@@ -8,6 +8,7 @@ function App() {
     const [searchResult, setSearchResult] = useState(null);
     const [error, setError] = useState(null);
     const [isNumber, setIsNumber] = useState(false);
+    const [bikes, setBikes] = useState([]);
 
     const modelRef = useRef(null);
     const categoryRef = useRef(null);
@@ -53,6 +54,7 @@ function App() {
         })
             .then((res) => {
                 console.log(res.status);
+                handleGetAllBikes();
             })
             .catch(error => {
                 setError(error.message);
@@ -82,76 +84,125 @@ function App() {
         });
     };
 
+    const handleGetAllBikes = () => {
+        fetch("http://localhost:8080/bike/getAll")
+            .then(res => res.json())
+            .then(res => setBikes(res));
+    };
+
+    const handleDeleteBike = (e) => {
+        e.preventDefault();
+        console.log("Delete clicked");
+    };
+
+    useEffect(() => {
+        handleGetAllBikes();
+    }, []);
+
     return (
         <>
             <h1>Wheels System</h1>
-            <div className="card">
-                <h2>Add Bike</h2>
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Type the bike model"
-                        onChange={handleModelValue}
-                        ref={modelRef}
-                    />
+            <div className="containerr">
+                <div className="card">
+                    <h2>Add Bike</h2>
+                    <div>
+                        <input
+                            type="text"
+                            placeholder="Type the bike model"
+                            onChange={handleModelValue}
+                            ref={modelRef}
+                        />
+                    </div>
+                    <div>
+                        <select defaultValue={1} onChange={handleCategoryValue} ref={categoryRef}>
+                            <option value={1} disabled={true}>Select any option</option>
+                            <option value="CASUAL">Casual</option>
+                            <option value="TRILHA">Trilha</option>
+                            <option value="ESPORTES">Esportes</option>
+                            <option value="EXTREME">Extreme</option>
+                        </select>
+                    </div>
+                    <button
+                        onClick={handleAddBike}
+                        disabled={model === "" || category === ""}
+                    >
+                        Add
+                    </button>
                 </div>
-                <div>
-                    <select defaultValue={1} onChange={handleCategoryValue} ref={categoryRef}>
-                        <option value={1} disabled={true}>Select any option</option>
-                        <option value="CASUAL">Casual</option>
-                        <option value="TRILHA">Trilha</option>
-                        <option value="ESPORTES">Esportes</option>
-                        <option value="EXTREME">Extreme</option>
-                    </select>
+                <div className="card">
+                    <h2>Search</h2>
+                    <div>
+                        <input type="text"
+                               placeholder="Enter the bike id or model"
+                               onChange={handleSearchValue}
+                               ref={searchRef}
+                        />
+                    </div>
+                    <button
+                        onClick={handleGetBike}
+                        disabled={searchValue === ""}
+                    >
+                        Search
+                    </button>
                 </div>
-                <button
-                    onClick={handleAddBike}
-                    disabled={model === "" || category === ""}
-                >
-                    Add
-                </button>
             </div>
-            <div className="card">
-                <h2>Search</h2>
-                <div>
-                    <input type="text"
-                           placeholder="Enter the bike id or model"
-                           onChange={handleSearchValue}
-                           ref={searchRef}
-                    />
-                </div>
-                <button
-                    onClick={handleGetBike}
-                    disabled={searchValue === ""}
-                >
-                    Search
-                </button>
-            </div>
-            {error == null && searchResult ? (
-                <>
-                    <p>
-                        Id: {searchResult.id}
-                    </p>
-                    <p>
-                        Modelo: {searchResult.modelo}
-                    </p>
-                    <p>
-                        Categoria: {searchResult.categoria}
-                    </p>
-                </>
-            ) : (
-                error && (
-                    <p>
-                        Error: {error}
-                    </p>
+            <div className="result_search">
+                {error == null && searchResult ? (
+                    <>
+                        <p>
+                            Id: {searchResult.id}
+                        </p>
+                        <p>
+                            Modelo: {searchResult.modelo}
+                        </p>
+                        <p>
+                            Categoria: {searchResult.categoria}
+                        </p>
+                    </>
+                ) : (
+                    error && (
+                        <p>
+                            Error: {error}
+                        </p>
+                    )
                 )
-            )
-            }
-            {(searchResult !== null || error !== null) && (
-                <button className="clear_btn" onClick={onClear}>
-                    Clear
-                </button>
-            )}
+                }
+                {(searchResult !== null || error !== null) && (
+                    <button className="clear_btn" onClick={onClear}>
+                        Clear
+                    </button>
+                )}
+            </div>
+            <div className="all_bikes">
+                <table>
+                    <thead>
+                    <tr>
+                        <th className="bike_id">#</th>
+                        <th className="bike_model">Model</th>
+                        <th>Category</th>
+                        <th className="bike_actions">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {bikes.map(bike => (
+                        <tr key={bike.id}>
+                            <td className="bike_id">{bike.id}</td>
+                            <td className="bike_model">{bike.modelo}</td>
+                            <td>{bike.categoria}</td>
+                            <td>
+                                <input
+                                    className="delete_btn"
+                                    type="button"
+                                    role="button"
+                                    value="Delete"
+                                    onClick={handleDeleteBike}
+                                />
+                            </td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
         </>
     );
 }

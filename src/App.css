@@ -5,6 +5,12 @@
   text-align: center;
 }
 
+.containerr {
+  width: 1200px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .card {
   display: flex;
   flex-direction: column;
@@ -12,12 +18,56 @@
   gap: 10px 0;
 }
 
-.clear_btn {
+.clear_btn,
+.delete_btn {
   background-color: #bd1616ad;
 }
 
-.clear_btn:hover {
+.clear_btn:hover,
+.delete_btn:hover {
   outline: none;
   background-color: #bd1616ff;
   border-color: #f9f9f9;
 }
+
+.delete_btn {
+  min-width: auto;
+}
+
+.delete_btn:focus {
+  border-color: #80ff00;
+}
+
+.all_bikes {
+  display: flex;
+  justify-content: center;
+  margin: 50px 0;
+}
+
+table {
+  width: 50%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 10px;
+}
+
+table tr:nth-child(even),
+table thead tr {
+  background-color: #7373737f;
+}
+
+.bike_id {
+  padding-right: 20px;
+}
+
+.bike_model {
+  padding-right: 20px;
+}
+
+/*.bike_actions {
+  text-align: center;
+}*/
