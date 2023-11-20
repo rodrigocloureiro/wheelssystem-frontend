@@ -52,16 +52,14 @@ function App() {
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(bike),
         })
-            .then((res) => {
-                console.log(res.status);
-                handleGetAllBikes();
-            })
+            .then((res) => console.log(res.status))
             .catch(error => {
                 setError(error.message);
                 //console.log(error);
             })
             .finally(() => {
                 onClearInputs();
+                handleGetAllBikes();
             });
     };
 
@@ -90,9 +88,16 @@ function App() {
             .then(res => setBikes(res));
     };
 
-    const handleDeleteBike = (e) => {
+    const handleDeleteBike = (e, bike) => {
         e.preventDefault();
-        console.log("Delete clicked");
+        fetch("http://localhost:8080/bike/delete", {
+            method: "DELETE",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(bike)
+        })
+            .then(res => res.text())
+            .then(data => console.log(data))
+            .finally(handleGetAllBikes);
     };
 
     useEffect(() => {
@@ -195,7 +200,7 @@ function App() {
                                     type="button"
                                     role="button"
                                     value="Delete"
-                                    onClick={handleDeleteBike}
+                                    onClick={(e) => handleDeleteBike(e, bike)}
                                 />
                             </td>
                         </tr>
